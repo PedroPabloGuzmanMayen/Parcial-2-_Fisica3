@@ -1,7 +1,64 @@
-import numpy as np
+import tkinter as tk
+from tkinter import messagebox
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+import matplotlib.patches as patches
+from mpl_interactions import ioff, panhandler, zoom_factory
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
+from tkinter import ttk
 
-ax = plt.axes(projection='3d')
-ax.scatter(3,5,7)
-plt.show()
+
+class MatplotlibGUI:
+    def drawCilinder():
+        pass
+    def drawSPhere(self):
+        pass
+    def drawPlates(self):
+        pass
+    
+    def calculateData(self):
+        print("Calculando datos")
+
+    
+    def __init__(self, master):
+    
+        self.master = master
+        self.master.title("Interfaz capacitores")
+
+        self.fig = Figure(figsize=(6, 4), dpi=100)
+        self.ax = self.fig.add_subplot()
+        self.ax.grid(True)
+        tk.Label(text="Elije el tipo de capacitor").pack()
+        tk.Label(text="Nota: si elijes un capacitor con dieléctrico, el valor de la constante K es de 3.40 (se tomará en cuenta que el dieléctrico es el Plexiglas) ").pack()
+
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)
+        self.canvas.get_tk_widget().pack()
+        # Habilitar zoom mediante el mouse de la computadora
+        zoom_factory(self.ax, base_scale=1.1)
+        #Habilitar la barra de herramientas
+        toolbar = NavigationToolbar2Tk(self.canvas, self.master, pack_toolbar=False)
+        toolbar.update()
+        toolbar.pack()
+        toolbar.pan() #Habilitar la navegación mediante el mouse
+        #Definir los botones para dibujar las distribuciones de carga
+        self.notebook = ttk.Notebook(master)
+        self.tab1  = ttk.Frame(self.notebook)
+        self.tab2 = ttk.Frame(self.notebook)
+        self.tab3 =ttk.Frame(self.notebook)
+        self.notebook.add(self.tab1, text="Capacitor cilíndrico")
+        self.notebook.add(self.tab2, text="Capacitor esférico")
+        self.notebook.add(self.tab3, text="Capacitor de placas paralelas")
+        self.notebook.pack()
+
+        tk.Label(self.tab1, text="Radio del cilindro").pack()
+        tk.Label(self.tab2, text="Longitud del cilindro").pack()
+
+        self.entry1 = tk.Entry(self.tab1).pack()
+
+
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = MatplotlibGUI(root)
+    root.mainloop()
