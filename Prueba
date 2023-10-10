@@ -8,21 +8,39 @@ import matplotlib.pyplot as plt
 from tkinter import ttk
 import numpy as np
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+from tkinter import IntVar
 
 
 class MatplotlibGUI:
 
     def drawCilinder(self):
         pass
-    def drawSPhere(self):
-        pass
-    def drawPlates(self, length, separation, height):
+    def drawSPhere(self, intrad, exrad, voltage, half, full):
         self.ax.clear()
+        sphere1 = patches.Circle((0, 0), intrad, linewidth=1, edgecolor='r')
+        sphere2 = patches.Circle((0, 0), exrad, linewidth=1, edgecolor='b')
+        self.ax.add_patch(sphere1)
+        self.ax.add_patch(sphere2)
+        if self.half ==1:
+            sphere3 = patches.Circle((0, 0), intrad, linewidth=1, edgecolor='gray')
+            self.ax.add_patch(sphere3)
+
+    def drawPlates(self, length, separation, height, half, full):
+        self.ax.clear()
+
+        
         plate1 = patches.Rectangle((0, 0), length, height , linewidth=1, edgecolor='r', facecolor='r')
         plate2 = patches.Rectangle((0, height + separation), length, height, linewidth=1, edgecolor='b', facecolor='b')
         self.ax.add_patch(plate1)
         self.ax.add_patch(plate2)
+        if half == 1:
+            plate3 = patches.Rectangle((0,height), length/2, separation, linewidth=1, edgecolor='gray', facecolor='gray')
+            self.ax.add_patch(plate3)
+        if full == 1:
+            plate3 = patches.Rectangle((0,height), length, separation, linewidth=1, edgecolor='gray', facecolor='gray')
+            self.ax.add_patch(plate3)
         self.canvas.draw()
+
 
     def calcPlateswithoutDielectric(self, length, separation, height, voltage):
         capacitance = (8.85e-12) * (height*length / separation)
@@ -34,13 +52,15 @@ class MatplotlibGUI:
     
     def calculateData(self, type):
 
+
         if (type == "Placas paralelas"):
+            print(self.half.get())
             length = float(self.length.get())
             height = float(self.height.get())
             separation = float(self.separation.get())
             voltage = float(self.voltage1.get())
 
-            self.drawPlates(length, separation, height)
+            self.drawPlates(length, separation, height, self.half.get(), self.full.get())
             self.calcPlateswithoutDielectric(length, separation, height, voltage)
         elif (type == "Esferico"):
             pass
@@ -83,6 +103,8 @@ class MatplotlibGUI:
         self.notebook.add(self.tab2, text="Capacitor esférico")
         self.notebook.add(self.tab3, text="Capacitor cilíndrico")
         self.notebook.pack()
+        self.half = IntVar() #Variable que almacena si el dieléctrico está a la mitad
+        self.full = IntVar() #Variable que almacena si el dieléctrico está completo
 
 
         #Pantalla para el capacitor de placas paralelas
@@ -98,8 +120,8 @@ class MatplotlibGUI:
         self.voltage1_label = tk.Label(self.tab1, text="Voltaje").pack()
         self.voltage1 = tk.Entry(self.tab1)
         self.voltage1.pack()
-        self.checkbox1 = tk.Checkbutton(self.tab1, text="Dieléctrico a la mitad").pack()
-        self.checkbox2 = tk.Checkbutton(self.tab1, text="Dieléctrico completo").pack()
+        self.checkbox1 = tk.Checkbutton(self.tab1,text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue =0).pack()
+        self.checkbox2 = tk.Checkbutton(self.tab1, text="Dieléctrico completo", variable = self.full, onvalue = 1, offvalue =0).pack()
         self.calcButton1 = tk.Button(self.tab1, text="Calcular", command= lambda:self.calculateData("Placas paralelas")).pack()
         #Finaliza la pantalla del capacitor de placas paralelas
 
@@ -109,9 +131,9 @@ class MatplotlibGUI:
         self.radio_Label = tk.Label(self.tab2, text="Radio interior").pack()
         self.entry7 = tk.Entry(self.tab2).pack()
         self.voltage2 = tk.Label(self.tab2, text="Voltaje").pack()  
-        self.entry8 = tk.Entry(self.tab2).pack()   
-        self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad").pack()
-        self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo").pack()
+        self.entry8 = tk.Entry(self.tab2).pack()  
+        #self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad").pack()
+        #self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo").pack()
         self.calcButton2 = tk.Button(self.tab2, text="Calcular", command=lambda: self.calculateData("Esferico")).pack()
         #Finaliza la pantalla del capacitor esférico
 
