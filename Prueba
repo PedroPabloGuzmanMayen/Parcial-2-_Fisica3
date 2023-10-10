@@ -6,18 +6,47 @@ import matplotlib.patches as patches
 from mpl_interactions import ioff, panhandler, zoom_factory
 import matplotlib.pyplot as plt
 from tkinter import ttk
+import numpy as np
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 
 class MatplotlibGUI:
-    def drawCilinder():
+
+    def drawCilinder(self):
         pass
     def drawSPhere(self):
         pass
-    def drawPlates(self):
+    def drawPlates(self, length, separation, height):
+        self.ax.clear()
+        plate1 = patches.Rectangle((0, 0), length, height , linewidth=1, edgecolor='r', facecolor='none')
+        plate2 = patches.Rectangle((0, height + separation), length, height, linewidth=1, edgecolor='r', facecolor='none')
+        self.ax.add_patch(plate1)
+        self.ax.add_patch(plate2)
+        self.canvas.draw()
+
+    def calcPlateswithoutDielectric(self, length, separation, height, voltage):
         pass
+        
     
-    def calculateData(self):
-        print("Calculando datos")
+    def calculateData(self, type):
+
+        if (type == "Placas paralelas"):
+            length = float(self.length.get())
+            width = float(self.widht.get())
+            separation = float(self.separation.get())
+            voltage = float(self.voltage1.get())
+
+            self.drawPlates(length, separation, width)
+        elif (type == "Esferico"):
+            pass
+        elif (type == "Cilindrico"):
+            pass
+
+
+
+
+        # Redraw the 3D plot
+        self.canvas.draw()
 
     
     def __init__(self, master):
@@ -45,15 +74,49 @@ class MatplotlibGUI:
         self.tab1  = ttk.Frame(self.notebook)
         self.tab2 = ttk.Frame(self.notebook)
         self.tab3 =ttk.Frame(self.notebook)
-        self.notebook.add(self.tab1, text="Capacitor cilíndrico")
+        self.notebook.add(self.tab1, text="Capacitor de placas paralelas")
         self.notebook.add(self.tab2, text="Capacitor esférico")
-        self.notebook.add(self.tab3, text="Capacitor de placas paralelas")
+        self.notebook.add(self.tab3, text="Capacitor cilíndrico")
         self.notebook.pack()
 
-        tk.Label(self.tab1, text="Radio del cilindro").pack()
-        tk.Label(self.tab2, text="Longitud del cilindro").pack()
 
-        self.entry1 = tk.Entry(self.tab1).pack()
+        #Pantalla para el capacitor de placas paralelas
+        self.lenght_Label = tk.Label(self.tab1, text="Longitud").pack() 
+        self.length = tk.Entry(self.tab1)
+        self.length.pack()
+        self.widht_Label = tk.Label(self.tab1, text="Ancho").pack()
+        self.widht = tk.Entry(self.tab1)
+        self.widht.pack()
+        self.sep_label = tk.Label(self.tab1, text="Separación").pack()
+        self.separation = tk.Entry(self.tab1)
+        self.separation.pack()
+        self.voltage1_label = tk.Label(self.tab1, text="Voltaje").pack()
+        self.voltage1 = tk.Entry(self.tab1)
+        self.voltage1.pack()
+        self.checkbox1 = tk.Checkbutton(self.tab1, text="Dieléctrico a la mitad").pack()
+        self.checkbox2 = tk.Checkbutton(self.tab1, text="Dieléctrico completo").pack()
+        self.calcButton1 = tk.Button(self.tab1, text="Calcular", command= lambda:self.calculateData("Placas paralelas")).pack()
+        #Finaliza la pantalla del capacitor de placas paralelas
+
+        #Pantalla para el capacitor esférico
+        self.radio_Label = tk.Label(self.tab2, text="Radio exterior").pack()
+        self.entry6 = tk.Entry(self.tab2).pack()
+        self.radio_Label = tk.Label(self.tab2, text="Radio interior").pack()
+        self.entry7 = tk.Entry(self.tab2).pack()
+        self.voltage2 = tk.Label(self.tab2, text="Voltaje").pack()  
+        self.entry8 = tk.Entry(self.tab2).pack()   
+        self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad").pack()
+        self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo").pack()
+        self.calcButton2 = tk.Button(self.tab2, text="Calcular", command=lambda: self.calculateData).pack()
+        #Finaliza la pantalla del capacitor esférico
+
+        #Etiquetas que almacenan los resultados de los cálculos
+        self.result1 = tk.Label(self.tab1, text="")
+        self.result1.pack()
+
+
+
+
 
 
 
