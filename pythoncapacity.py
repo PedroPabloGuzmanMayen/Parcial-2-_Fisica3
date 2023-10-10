@@ -32,5 +32,5 @@ def main():
     capacity = spherical_capacitor_capacity(r1, r2, epsilon)
 
     print("La capacidad del condensador esférico es de {} faradios.".format(capacity))
-
+#pinche pedro
 main()
