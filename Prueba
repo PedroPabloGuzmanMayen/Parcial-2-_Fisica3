@@ -15,15 +15,14 @@ class MatplotlibGUI:
 
     def drawCilinder(self):
         pass
-    def drawSPhere(self, intrad, exrad, voltage, half, full):
+    def drawSPhere(self, intrad, exrad):
         self.ax.clear()
-        sphere1 = patches.Circle((0, 0), intrad, linewidth=1, edgecolor='r')
-        sphere2 = patches.Circle((0, 0), exrad, linewidth=1, edgecolor='b')
-        self.ax.add_patch(sphere1)
+        sphere2 = patches.Circle((0, 0), exrad, linewidth=1, edgecolor='b', fill=False)
+        sphere1 = patches.Circle((0, 0), intrad, linewidth=1, edgecolor='r', fill =False)
+        
         self.ax.add_patch(sphere2)
-        if self.half ==1:
-            sphere3 = patches.Circle((0, 0), intrad, linewidth=1, edgecolor='gray')
-            self.ax.add_patch(sphere3)
+        self.ax.add_patch(sphere1)
+        self.canvas.draw()
 
     def drawPlates(self, length, separation, height, half, full):
         self.ax.clear()
@@ -48,11 +47,17 @@ class MatplotlibGUI:
         energy = 0.5*charge*voltage
         self.result1.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
 
+    def calcSphereData(self, inrad, exrad, voltage):
+        capacitante = (4*np.pi*8.85e-12) / (1/exrad - 1/inrad)
+        charge = capacitante * voltage
+        energy = 0.5*charge*voltage
+        self.result2.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitante) + "F\n" + "Energía: " + str(energy) + "J")
+
         
     
     def calculateData(self, type):
 
-
+    
         if (type == "Placas paralelas"):
             print(self.half.get())
             length = float(self.length.get())
@@ -62,8 +67,12 @@ class MatplotlibGUI:
 
             self.drawPlates(length, separation, height, self.half.get(), self.full.get())
             self.calcPlateswithoutDielectric(length, separation, height, voltage)
-        elif (type == "Esferico"):
-            pass
+        if (type == "Esferico"):
+            inrad = float(self.inrad.get())
+            exrad = float(self.exrad.get())
+            voltage = float(self.voltage2.get())
+            self.drawSPhere(inrad, exrad)
+            self.calcSphereData(inrad, exrad, voltage) 
         elif (type == "Cilindrico"):
             pass
 
@@ -127,11 +136,14 @@ class MatplotlibGUI:
 
         #Pantalla para el capacitor esférico
         self.radio_Label = tk.Label(self.tab2, text="Radio exterior").pack()
-        self.entry6 = tk.Entry(self.tab2).pack()
+        self.exrad = tk.Entry(self.tab2)
+        self.exrad.pack()
         self.radio_Label = tk.Label(self.tab2, text="Radio interior").pack()
-        self.entry7 = tk.Entry(self.tab2).pack()
-        self.voltage2 = tk.Label(self.tab2, text="Voltaje").pack()  
-        self.entry8 = tk.Entry(self.tab2).pack()  
+        self.inrad = tk.Entry(self.tab2)
+        self.inrad.pack()
+        self.voltage2_label = tk.Label(self.tab2, text="Voltaje").pack()  
+        self.voltage2 = tk.Entry(self.tab2)
+        self.voltage2.pack()
         #self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad").pack()
         #self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo").pack()
         self.calcButton2 = tk.Button(self.tab2, text="Calcular", command=lambda: self.calculateData("Esferico")).pack()
@@ -140,6 +152,8 @@ class MatplotlibGUI:
         #Etiquetas que almacenan los resultados de los cálculos
         self.result1 = tk.Label(self.tab1, text="")
         self.result1.pack()
+        self.result2 = tk.Label(self.tab2, text="")
+        self.result2.pack()
 
 
 
