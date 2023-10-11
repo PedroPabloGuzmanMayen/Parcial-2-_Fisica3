@@ -103,22 +103,31 @@ class MatplotlibGUI:
                                     "Capacitancia: " + str(capacitance) + "F")
 
     def calcSphereCharge(self, inrad, exrad, voltage, half, full):
-        capacitante = (4 * np.pi * 8.85e-12 * inrad * exrad) / (exrad - inrad)
-        capacitance = capacitante  # La capacitancia no cambia independientemente del dieléctrico
-        charge = capacitance * voltage
+        ogcapacitante = (4 * np.pi * 8.85e-12 * inrad * exrad) / (exrad - inrad)
+        charge = ogcapacitante * voltage
         if half == 1:
-            charge_ligada = (capacitance * self.plexigas - capacitante) * voltage
+            capacitance = ((self.plexigas * ogcapacitante)/2) + ogcapacitante/2
+            print(capacitance)
+            energy = (0.5*ogcapacitante*voltage**2)/2 + (0.5*capacitance*(voltage/self.plexigas)**2)/2
+            print(energy)
+        elif full ==1:
+            capacitance = self.plexigas * ogcapacitante
+
+            energy = 0.5 * capacitance * (voltage / self.plexigas) ** 2
+            self.result2.config(text="Carga: " + str(charge) + "C, " + "Capacitancia: " + str(capacitance) + "F, " + "Energía: " + str(energy) + "J")
         else:
-            charge_ligada = 0
-        self.result2.config(text="Carga libre: " + str(charge - charge_ligada) + "C\n"
-                                "Carga ligada: " + str(charge_ligada) + "C\n"
-                                "Capacitancia: " + str(capacitante) + "F")
+            energy = 0.5 * ogcapacitante * voltage ** 2
+            self.result2.config(text="Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(ogcapacitante) + "F\n" + "Energía: " + str(energy) + "J")
 
     def calcCilinderCharge(self, inradc, exradc, lengthc, voltage, half, full):
+        ogcapacitance = (2 * np.pi * 8.85e-12 * lengthc) / (math.log(exradc / inradc))
+        charge = ogcapacitance * voltage
         if half == 1:
             capacitance = (2 * np.pi * 8.85e-12 * lengthc * self.plexigas / 2) / (math.log(exradc / inradc))
+            
         elif full == 1:
             capacitance = (2 * np.pi * 8.85e-12 * lengthc * self.plexigas) / (math.log(exradc / inradc))
+            energy = 0.5 * capacitance * (voltage / self.plexigas) ** 2
         else:
             capacitance = (2 * np.pi * 8.85e-12 * lengthc) / (math.log(exradc / inradc))
         charge = capacitance * voltage
