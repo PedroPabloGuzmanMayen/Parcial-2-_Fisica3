@@ -16,92 +16,123 @@ class MatplotlibGUI:
 
     def drawCilinder(self, length, inrad, exrad, half, full):
         self.ax.clear()
-        cilinder1 = patches.FancyBboxPatch((0, 0), length, exrad, linewidth=3, edgecolor='b', facecolor = "r")
+        cilinder1 = patches.FancyBboxPatch((0, 0), length, exrad, linewidth=3, edgecolor='b', facecolor="r")
         self.ax.add_patch(cilinder1)
-        #Dibujar el plot
+        # Dibujar el plot
         self.canvas.draw()
-
 
     def drawSPhere(self, intrad, exrad, half, full):
         self.ax.clear()
-        sphere2 = patches.Circle((0, 0), exrad, linewidth=3, edgecolor='b', facecolor = "white")
-        sphere1 = patches.Circle((0, 0), intrad, linewidth=1, edgecolor='r', facecolor = "white")
-        
+        sphere2 = patches.Circle((0, 0), exrad, linewidth=3, edgecolor='b', facecolor="white")
+        sphere1 = patches.Circle((0, 0), intrad, linewidth=1, edgecolor='r', facecolor="white")
+
         self.ax.add_patch(sphere2)
-        if (full == 1):
-            sphere3 = patches.Circle((0,0), exrad, linewidth=0, edgecolor='gray', facecolor='gray')
+        if full == 1:
+            sphere3 = patches.Circle((0, 0), exrad, linewidth=0, edgecolor='gray', facecolor='gray')
             self.ax.add_patch(sphere3)
 
-        if (half == 1):
+        if half == 1:
             theta = np.linspace(0, np.pi, 100)
             x = 0 + exrad * np.cos(theta)
             y = 0 + exrad * np.sin(theta)
 
             # Fill the upper half with a color (e.g., blue)
             self.ax.fill_between(x, y, color='gray', alpha=0.5)
-        
+
         self.ax.add_patch(sphere1)
         self.canvas.draw()
 
     def drawPlates(self, length, separation, height, half, full):
         self.ax.clear()
 
-        
-        plate1 = patches.Rectangle((0, 0), length, height , linewidth=1, edgecolor='r', facecolor='r')
+        plate1 = patches.Rectangle((0, 0), length, height, linewidth=1, edgecolor='r', facecolor='r')
         plate2 = patches.Rectangle((0, height + separation), length, height, linewidth=1, edgecolor='b', facecolor='b')
         self.ax.add_patch(plate1)
         self.ax.add_patch(plate2)
         if half == 1:
-            plate3 = patches.Rectangle((0,height), length/2, separation, linewidth=1, edgecolor='gray', facecolor='gray')
+            plate3 = patches.Rectangle((0, height), length / 2, separation, linewidth=1, edgecolor='gray',
+                                      facecolor='gray')
             self.ax.add_patch(plate3)
         if full == 1:
-            plate3 = patches.Rectangle((0,height), length, separation, linewidth=1, edgecolor='gray', facecolor='gray')
+            plate3 = patches.Rectangle((0, height), length, separation, linewidth=1, edgecolor='gray',
+                                      facecolor='gray')
             self.ax.add_patch(plate3)
         self.canvas.draw()
 
-
     def calcPlateswithoutDielectric(self, length, separation, height, voltage, half, full):
-
-        ogcapacitance = (8.85e-12) * (height*length / separation)
+        ogcapacitance = (8.85e-12) * (height * length / separation)
         charge = ogcapacitance * voltage
         if half == 1:
-            pass
+            capacitance = (ogcapacitance * self.plexigas)
+            energy = 0.5 * capacitance * (voltage / self.plexigas) ** 2
         elif full == 1:
-            capacitance = (ogcapacitance*self.plexigas)
-            energy = 0.5*capacitance*(voltage/self.plexigas)**2
+            capacitance = (ogcapacitance * self.plexigas)
+            energy = 0.5 * capacitance * (voltage / self.plexigas) ** 2
         else:
             capacitance = ogcapacitance
-            energy = 0.5*capacitance*voltage**2
-        self.result1.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
+            energy = 0.5 * capacitance * voltage ** 2
+        self.result1.config(text="Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
 
     def calcSphereData(self, inrad, exrad, voltage):
-        capacitante = (4*np.pi*8.85e-12*inrad*exrad) / (exrad - inrad)
+        capacitante = (4 * np.pi * 8.85e-12 * inrad * exrad) / (exrad - inrad)
         charge = capacitante * voltage
-        energy = 0.5*charge*voltage
-        self.result2.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitante) + "F\n" + "Energía: " + str(energy) + "J")
+        energy = 0.5 * charge * voltage
+        self.result2.config(text="Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitante) + "F\n" + "Energía: " + str(energy) + "J")
 
     def calcCilinderData(self, inradc, exradc, lengthc, voltage, half, full):
-        ogCapacitange = (2*np.pi*8.85e-12*lengthc) / (math.log(exradc/inradc))
-        charge = ogCapacitange * voltage
-        if full == 1:
-            capacitance = (2*np.pi*8.85e-12*lengthc*self.plexigas) / (math.log(exradc/inradc))
-            energy = 0.5*capacitance*(voltage/self.plexigas)**2
-        elif half == 1:
-            capacitance = (2*np.pi*8.85e-12*lengthc*self.plexigas/2) / (math.log(exradc/inradc))
-            energy = 0
+        if half == 1:
+            capacitance = (2 * np.pi * 8.85e-12 * lengthc * self.plexigas / 2) / (math.log(exradc / inradc))
+        elif full == 1:
+            capacitance = (2 * np.pi * 8.85e-12 * lengthc * self.plexigas) / (math.log(exradc / inradc))
         else:
-            capacitance = ogCapacitange
-            energy = 0.5*capacitance*voltage**2
-        self.result3.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
+            capacitance = (2 * np.pi * 8.85e-12 * lengthc) / (math.log(exradc / inradc))
+        charge = capacitance * voltage
+        energy = 0.5 * capacitance * voltage ** 2
+        self.result3.config(text="Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
 
+    def calcPlatesCharge(self, length, separation, height, voltage, half, full):
+            ogcapacitance = (8.85e-12) * (height * length / separation)
+            capacitance = ogcapacitance  # La capacitancia no cambia independientemente del dieléctrico
+            charge = capacitance * voltage
+            if half == 1:
+                charge_ligada = (capacitance * self.plexigas - ogcapacitance) * voltage
+            else:
+                charge_ligada = 0
+            self.result1.config(text="Carga libre: " + str(charge - charge_ligada) + "C\n"
+                                    "Carga ligada: " + str(charge_ligada) + "C\n"
+                                    "Capacitancia: " + str(capacitance) + "F")
 
-        
-    
+    def calcSphereCharge(self, inrad, exrad, voltage, half, full):
+        capacitante = (4 * np.pi * 8.85e-12 * inrad * exrad) / (exrad - inrad)
+        capacitance = capacitante  # La capacitancia no cambia independientemente del dieléctrico
+        charge = capacitance * voltage
+        if half == 1:
+            charge_ligada = (capacitance * self.plexigas - capacitante) * voltage
+        else:
+            charge_ligada = 0
+        self.result2.config(text="Carga libre: " + str(charge - charge_ligada) + "C\n"
+                                "Carga ligada: " + str(charge_ligada) + "C\n"
+                                "Capacitancia: " + str(capacitante) + "F")
+
+    def calcCilinderCharge(self, inradc, exradc, lengthc, voltage, half, full):
+        if half == 1:
+            capacitance = (2 * np.pi * 8.85e-12 * lengthc * self.plexigas / 2) / (math.log(exradc / inradc))
+        elif full == 1:
+            capacitance = (2 * np.pi * 8.85e-12 * lengthc * self.plexigas) / (math.log(exradc / inradc))
+        else:
+            capacitance = (2 * np.pi * 8.85e-12 * lengthc) / (math.log(exradc / inradc))
+        charge = capacitance * voltage
+        if half == 1:
+            charge_ligada = (capacitance * self.plexigas - capacitance) * voltage
+        else:
+            charge_ligada = 0
+        self.result3.config(text="Carga libre: " + str(charge - charge_ligada) + "C\n"
+                                "Carga ligada: " + str(charge_ligada) + "C\n"
+                                "Capacitancia: " + str(capacitance) + "F")
+
     def calculateData(self, type):
 
-    
         if (type == "Placas paralelas"):
-            print(self.half.get())
             length = float(self.length.get())
             height = float(self.height.get())
             separation = float(self.separation.get())
@@ -109,12 +140,14 @@ class MatplotlibGUI:
 
             self.drawPlates(length, separation, height, self.half.get(), self.full.get())
             self.calcPlateswithoutDielectric(length, separation, height, voltage, self.half.get(), self.full.get())
+            self.calcPlatesCharge(length, separation, height, voltage, self.half.get(), self.full.get())
         elif (type == "Esferico"):
             inrad = float(self.inrad.get())
             exrad = float(self.exrad.get())
             voltage = float(self.voltage2.get())
             self.drawSPhere(inrad, exrad, self.half.get(), self.full.get())
-            self.calcSphereData(inrad, exrad, voltage) 
+            self.calcSphereData(inrad, exrad, voltage)
+            self.calcSphereCharge(inrad, exrad, voltage, self.half.get(), self.full.get())
         elif (type == "Cilindrico"):
             inradc = float(self.inradc.get())
             exradc = float(self.exradc.get())
@@ -122,17 +155,11 @@ class MatplotlibGUI:
             lengthc = float(self.lengthc.get())
             self.drawCilinder(lengthc, inradc, exradc, self.half.get(), self.full.get())
             self.calcCilinderData(inradc, exradc, lengthc, voltage, self.half.get(), self.full.get())
+            self.calcCilinderCharge(inradc, exradc, lengthc, voltage, self.half.get(), self.full.get())
 
-
-
-
-
-        # Redraw the 3D plot
         self.canvas.draw()
 
-    
     def __init__(self, master):
-    
         self.master = master
         self.master.title("Interfaz capacitores")
 
@@ -140,33 +167,32 @@ class MatplotlibGUI:
         self.ax = self.fig.add_subplot()
         self.ax.grid(True)
         tk.Label(text="Elije el tipo de capacitor").pack()
-        tk.Label(text="Nota: si elijes un capacitor con dieléctrico, el valor de la constante K es de 3.40 (se tomará en cuenta que el dieléctrico es el Plexiglas) ").pack()
+        tk.Label(text="Nota: si eliges un capacitor con dieléctrico, el valor de la constante K es de 3.40 (se tomará en cuenta que el dieléctrico es el Plexiglas) ").pack()
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)
         self.canvas.get_tk_widget().pack()
         # Habilitar zoom mediante el mouse de la computadora
         zoom_factory(self.ax, base_scale=1.1)
-        #Habilitar la barra de herramientas
+        # Habilitar la barra de herramientas
         toolbar = NavigationToolbar2Tk(self.canvas, self.master, pack_toolbar=False)
         toolbar.update()
         toolbar.pack()
-        toolbar.pan() #Habilitar la navegación mediante el mouse
-        self.plexigas = 3.40 #Constante dieléctrica del Plexiglas
-        #Definir los botones para dibujar las distribuciones de carga
+        toolbar.pan()  # Habilitar la navegación mediante el mouse
+        self.plexigas = 3.40  # Constante dieléctrica del Plexiglas
+        # Definir los botones para dibujar las distribuciones de carga
         self.notebook = ttk.Notebook(master)
-        self.tab1  = ttk.Frame(self.notebook)
+        self.tab1 = ttk.Frame(self.notebook)
         self.tab2 = ttk.Frame(self.notebook)
-        self.tab3 =ttk.Frame(self.notebook)
+        self.tab3 = ttk.Frame(self.notebook)
         self.notebook.add(self.tab1, text="Capacitor de placas paralelas")
         self.notebook.add(self.tab2, text="Capacitor esférico")
         self.notebook.add(self.tab3, text="Capacitor cilíndrico")
         self.notebook.pack()
-        self.half = IntVar() #Variable que almacena si el dieléctrico está a la mitad
-        self.full = IntVar() #Variable que almacena si el dieléctrico está completo
+        self.half = IntVar()  # Variable que almacena si el dieléctrico está a la mitad
+        self.full = IntVar()  # Variable que almacena si el dieléctrico está completo
 
-
-        #Pantalla para el capacitor de placas paralelas
-        self.lenght_Label = tk.Label(self.tab1, text="Longitud (m)").pack() 
+        # Pantalla para el capacitor de placas paralelas
+        self.lenght_Label = tk.Label(self.tab1, text="Longitud (m)").pack()
         self.length = tk.Entry(self.tab1)
         self.length.pack()
         self.height_Label = tk.Label(self.tab1, text="Altura (m)").pack()
@@ -178,27 +204,31 @@ class MatplotlibGUI:
         self.voltage1_label = tk.Label(self.tab1, text="Voltaje (V)").pack()
         self.voltage1 = tk.Entry(self.tab1)
         self.voltage1.pack()
-        self.checkbox1 = tk.Checkbutton(self.tab1,text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue =0).pack()
-        self.checkbox2 = tk.Checkbutton(self.tab1, text="Dieléctrico completo", variable = self.full, onvalue = 1, offvalue =0).pack()
-        self.calcButton1 = tk.Button(self.tab1, text="Calcular", command= lambda:self.calculateData("Placas paralelas")).pack()
-        #Finaliza la pantalla del capacitor de placas paralelas
+        self.checkbox1 = tk.Checkbutton(self.tab1, text="Dieléctrico a la mitad", variable=self.half, onvalue=1,
+                                      offvalue=0).pack()
+        self.checkbox2 = tk.Checkbutton(self.tab1, text="Dieléctrico completo", variable=self.full, onvalue=1,
+                                      offvalue=0).pack()
+        self.calcButton1 = tk.Button(self.tab1, text="Calcular", command=lambda: self.calculateData("Placas paralelas")).pack()
+        # Finaliza la pantalla del capacitor de placas paralelas
 
-        #Pantalla para el capacitor esférico
+        # Pantalla para el capacitor esférico
         self.radio_Label = tk.Label(self.tab2, text="Radio exterior (m)").pack()
         self.exrad = tk.Entry(self.tab2)
         self.exrad.pack()
         self.radio_Label = tk.Label(self.tab2, text="Radio interior (m)").pack()
         self.inrad = tk.Entry(self.tab2)
         self.inrad.pack()
-        self.voltage2_label = tk.Label(self.tab2, text="Voltaje (V)").pack()  
+        self.voltage2_label = tk.Label(self.tab2, text="Voltaje (V)").pack()
         self.voltage2 = tk.Entry(self.tab2)
         self.voltage2.pack()
-        self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue = 0).pack()
-        self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo", variable = self.full, onvalue = 1, offvalue = 0).pack()
+        self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad", variable=self.half, onvalue=1,
+                                      offvalue=0).pack()
+        self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo", variable=self.full, onvalue=1,
+                                      offvalue=0).pack()
         self.calcButton2 = tk.Button(self.tab2, text="Calcular", command=lambda: self.calculateData("Esferico")).pack()
-        #Finaliza la pantalla del capacitor esférico
+        # Finaliza la pantalla del capacitor esférico
 
-        #Pantalla para el capacitor cilíndrico
+        # Pantalla para el capacitor cilíndrico
         self.length_Labelc = tk.Label(self.tab3, text="Longitud (m)").pack()
         self.lengthc = tk.Entry(self.tab3)
         self.lengthc.pack()
@@ -211,26 +241,20 @@ class MatplotlibGUI:
         self.voltage3_label = tk.Label(self.tab3, text="Voltaje (V)").pack()
         self.voltage3 = tk.Entry(self.tab3)
         self.voltage3.pack()
-        self.checkbox5 = tk.Checkbutton(self.tab3, text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue = 0).pack()
-        self.checkbox6 = tk.Checkbutton(self.tab3, text="Dieléctrico completo", variable = self.full, onvalue = 1, offvalue = 0).pack()
+        self.checkbox5 = tk.Checkbutton(self.tab3, text="Dieléctrico a la mitad", variable=self.half, onvalue=1,
+                                      offvalue=0).pack()
+        self.checkbox6 = tk.Checkbutton(self.tab3, text="Dieléctrico completo", variable=self.full, onvalue=1,
+                                      offvalue=0).pack()
         self.calcButton3 = tk.Button(self.tab3, text="Calcular", command=lambda: self.calculateData("Cilindrico")).pack()
-        #Finaliza la pantalla del capacitor cilíndrico
+        # Finaliza la pantalla del capacitor cilíndrico
 
-
-
-        #Etiquetas que almacenan los resultados de los cálculos
+        # Etiquetas que almacenan los resultados de los cálculos
         self.result1 = tk.Label(self.tab1, text="")
         self.result1.pack()
         self.result2 = tk.Label(self.tab2, text="")
         self.result2.pack()
         self.result3 = tk.Label(self.tab3, text="")
         self.result3.pack()
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
