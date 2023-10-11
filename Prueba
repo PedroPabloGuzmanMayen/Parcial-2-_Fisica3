@@ -29,7 +29,7 @@ class MatplotlibGUI:
         self.ax.add_patch(sphere2)
         if full == 1:
             sphere3 = patches.Circle((0, 0), exrad, linewidth=0, edgecolor='gray', facecolor='gray')
-            self.ax.add_patch(sphere3)
+            self.ax add_patch(sphere3)
 
         if half == 1:
             theta = np.linspace(0, np.pi, 100)
@@ -73,8 +73,8 @@ class MatplotlibGUI:
             energy = 0.5 * capacitance * voltage ** 2
         self.result1.config(text="Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
 
-    def calcSphereData(self, inrad, exrad, voltage):
-        capacitante = (4 * np.pi * 8.85e-12 * inrad * exrad) / (exrad - inrad)
+    def calcSphereData(self, intrad, exrad, voltage):
+        capacitante = (4 * np.pi * 8.85e-12 * intrad * exrad) / (exrad - intrad)
         charge = capacitante * voltage
         energy = 0.5 * charge * voltage
         self.result2.config(text="Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitante) + "F\n" + "Energía: " + str(energy) + "J")
@@ -91,16 +91,17 @@ class MatplotlibGUI:
         self.result3.config(text="Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
 
     def calcPlatesCharge(self, length, separation, height, voltage, half, full):
-            ogcapacitance = (8.85e-12) * (height * length / separation)
-            capacitance = ogcapacitance  # La capacitancia no cambia independientemente del dieléctrico
-            charge = capacitance * voltage
-            if half == 1:
-                charge_ligada = (capacitance * self.plexigas - ogcapacitance) * voltage
-            else:
-                charge_ligada = 0
-            self.result1.config(text="Carga libre: " + str(charge - charge_ligada) + "C\n"
-                                    "Carga ligada: " + str(charge_ligada) + "C\n"
-                                    "Capacitancia: " + str(capacitance) + "F")
+        ogcapacitance = (8.85e-12) * (height * length / separation)
+        capacitance = ogcapacitance  # La capacitancia no cambia independientemente del dieléctrico
+        charge = capacitance * voltage
+        if half == 1:
+            charge_ligada = (capacitance * self.plexigas - ogcapacitance) * voltage
+        else:
+            charge_ligada = 0
+        self.result1.config(text="Carga libre: " + str(charge - charge_ligada) + "C\n"
+                            "Carga ligada: " + str(charge_ligada) + "C\n"
+                            "Capacitancia: " + str(capacitance) + "F\n"
+                            "Energía: " + str(0.5 * capacitance * voltage ** 2) + "J")
 
     def calcSphereCharge(self, inrad, exrad, voltage, half, full):
         ogcapacitante = (4 * np.pi * 8.85e-12 * inrad * exrad) / (exrad - inrad)
@@ -116,8 +117,16 @@ class MatplotlibGUI:
             energy = 0.5 * capacitance * (voltage / self.plexigas) ** 2
             self.result2.config(text="Carga: " + str(charge) + "C, " + "Capacitancia: " + str(capacitance) + "F, " + "Energía: " + str(energy) + "J")
         else:
+<<<<<<< Updated upstream
             energy = 0.5 * ogcapacitante * voltage ** 2
             self.result2.config(text="Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(ogcapacitante) + "F\n" + "Energía: " + str(energy) + "J")
+=======
+            charge_ligada = 0
+        self.result2.config(text="Carga libre: " + str(charge - charge_ligada) + "C\n"
+                            "Carga ligada: " + str(charge_ligada) + "C\n"
+                            "Capacitancia: " + str(capacitante) + "F\n"
+                            "Energía: " + str(0.5 * capacitance * voltage ** 2) + "J")
+>>>>>>> Stashed changes
 
     def calcCilinderCharge(self, inradc, exradc, lengthc, voltage, half, full):
         ogcapacitance = (2 * np.pi * 8.85e-12 * lengthc) / (math.log(exradc / inradc))
@@ -136,8 +145,9 @@ class MatplotlibGUI:
         else:
             charge_ligada = 0
         self.result3.config(text="Carga libre: " + str(charge - charge_ligada) + "C\n"
-                                "Carga ligada: " + str(charge_ligada) + "C\n"
-                                "Capacitancia: " + str(capacitance) + "F")
+                            "Carga ligada: " + str(charge_ligada) + "C\n"
+                            "Capacitancia: " + str(capacitance) + "F\n"
+                            "Energía: " + str(0.5 * capacitance * voltage ** 2) + "J")
 
     def calculateData(self, type):
 
