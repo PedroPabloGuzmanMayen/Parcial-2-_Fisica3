@@ -90,17 +90,19 @@ class MatplotlibGUI:
         energy = 0.5 * capacitance * voltage ** 2
         self.result3.config(text="Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
 
-    def calcPlatesCharge(self, length, separation, height, voltage, half, full):
+    def calcPlatesCharge(self, length, separation, height, voltage, half, full, kappa):
         ogcapacitance = (8.85e-12) * (height * length / separation)
-        capacitance = ogcapacitance  # La capacitancia no cambia independientemente del dieléctrico
+        capacitance = ogcapacitance
         charge = capacitance * voltage
 
-        # Calcula la capacitancia con dieléctrico y sin dieléctrico
-        capacitance_with_dielectric = capacitance * self.plexigas
-        charge_with_dielectric = capacitance_with_dielectric * voltage
+        # Calcula la carga ligada para las placas sin dieléctrico
+        charge_ligada = 0
 
-        # Calcula la carga ligada
-        charge_ligada = charge_with_dielectric - charge
+        if half == 1:
+            capacitance_with_dielectric = capacitance * kappa
+            charge_with_dielectric = capacitance_with_dielectric * voltage
+            # Calcula la carga ligada para las placas con dieléctrico
+            charge_ligada = charge_with_dielectric - charge
 
         # Calcula la carga libre
         charge_libre = charge - charge_ligada
@@ -110,13 +112,13 @@ class MatplotlibGUI:
                             "Capacitancia: " + str(capacitance) + "F\n"
                             "Energía: " + str(0.5 * capacitance * voltage ** 2) + "J")
 
-    def calcSphereCharge(self, inrad, exrad, voltage, half, full):
+    def calcSphereCharge(self, inrad, exrad, voltage, half, full, kappa):
         capacitante = (4 * np.pi * 8.85e-12 * inrad * exrad) / (exrad - inrad)
-        capacitance = capacitante  # La capacitancia no cambia independientemente del dieléctrico
+        capacitance = capacitante
         charge = capacitance * voltage
 
         # Calcula la capacitancia con dieléctrico y sin dieléctrico
-        capacitance_with_dielectric = capacitance * self.plexigas
+        capacitance_with_dielectric = capacitance * kappa
         charge_with_dielectric = capacitance_with_dielectric * voltage
 
         # Calcula la carga ligada
@@ -130,19 +132,19 @@ class MatplotlibGUI:
                             "Capacitancia: " + str(capacitance) + "F\n"
                             "Energía: " + str(0.5 * capacitance * voltage ** 2) + "J")
 
-    def calcCilinderCharge(self, inradc, exradc, lengthc, voltage, half, full):
-        ogcapacitance = (2 * np.pi * 8.85e-12 * lengthc) / (math.log(exradc / inradc)
-        charge = ogcapacitance * voltage
 
-        if half == 1:
-            capacitance = (2 * np.pi * 8.85e-12 * lengthc * self.plexigas / 2) / (math.log(exradc / inradc))
-        elif full == 1:
-            capacitance = (2 * np.pi * 8.85e-12 * lengthc * self.plexigas) / (math.log(exradc / inradc))
-        else:
-            capacitance = (2 * np.pi * 8.85e-12 * lengthc) / (math.log(exradc / inradc))
+    def calcCilinderCharge(self, inradc, exradc, lengthc, voltage, half, full, kappa):
+        ogcapacitance = (2 * np.pi * 8.85e-12 * lengthc) / (math.log(exradc / inradc))
+        capacitance = ogcapacitance
+        charge = capacitance * voltage
 
         # Calcula la capacitancia con dieléctrico y sin dieléctrico
-        capacitance_with_dielectric = capacitance * self.plexigas
+        if half == 1:
+            capacitance_with_dielectric = capacitance * kappa / 2
+        elif full == 1:
+            capacitance_with_dielectric = capacitance * kappa
+        else:
+            capacitance_with_dielectric = capacitance
         charge_with_dielectric = capacitance_with_dielectric * voltage
 
         # Calcula la carga ligada
@@ -155,7 +157,6 @@ class MatplotlibGUI:
                             "Carga ligada: " + str(charge_ligada) + "C\n"
                             "Capacitancia: " + str(capacitance) + "F\n"
                             "Energía: " + str(0.5 * capacitance * voltage ** 2) + "J")
-
 
     def calculateData(self, type):
 
