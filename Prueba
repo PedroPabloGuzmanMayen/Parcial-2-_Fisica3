@@ -54,8 +54,13 @@ class MatplotlibGUI:
         energy = 0.5*charge*voltage
         self.result2.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitante) + "F\n" + "Energía: " + str(energy) + "J")
 
-    def calcCilinderData(self, inrad, exrad, length, voltage):
-        capacitance = (2*np.pi*8.85e-12*length) / (math.log(exrad/inrad))
+    def calcCilinderData(self, inradc, exradc, lengthc, voltage, dielectricConstant, dielectricType):
+        if dielectricType == "lleno":
+            capacitance = (2*np.pi*8.85e-12*lengthc*dielectricConstant) / (math.log(exradc/inradc))
+        elif dielectricType == "mitad":
+            capacitance = (2*np.pi*8.85e-12*lengthc*dielectricConstant/2) / (math.log(exradc/inradc))
+        else:
+            capacitance = (2*np.pi*8.85e-12*lengthc) / (math.log(exradc/inradc))
         charge = capacitance * voltage
         energy = 0.5*charge*voltage
         self.result3.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
