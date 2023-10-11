@@ -49,7 +49,7 @@ class MatplotlibGUI:
         self.result1.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
 
     def calcSphereData(self, inrad, exrad, voltage):
-        capacitante = (4*np.pi*8.85e-12) / (1/exrad - 1/inrad)
+        capacitante = (4*np.pi*8.85e-12*inrad*exrad) / (exrad - inrad)
         charge = capacitante * voltage
         energy = 0.5*charge*voltage
         self.result2.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitante) + "F\n" + "Energía: " + str(energy) + "J")
@@ -131,16 +131,16 @@ class MatplotlibGUI:
 
 
         #Pantalla para el capacitor de placas paralelas
-        self.lenght_Label = tk.Label(self.tab1, text="Longitud").pack() 
+        self.lenght_Label = tk.Label(self.tab1, text="Longitud (m)").pack() 
         self.length = tk.Entry(self.tab1)
         self.length.pack()
-        self.height_Label = tk.Label(self.tab1, text="Altura").pack()
+        self.height_Label = tk.Label(self.tab1, text="Altura (m)").pack()
         self.height = tk.Entry(self.tab1)
         self.height.pack()
-        self.sep_label = tk.Label(self.tab1, text="Separación").pack()
+        self.sep_label = tk.Label(self.tab1, text="Separación (m)").pack()
         self.separation = tk.Entry(self.tab1)
         self.separation.pack()
-        self.voltage1_label = tk.Label(self.tab1, text="Voltaje").pack()
+        self.voltage1_label = tk.Label(self.tab1, text="Voltaje (V)").pack()
         self.voltage1 = tk.Entry(self.tab1)
         self.voltage1.pack()
         self.checkbox1 = tk.Checkbutton(self.tab1,text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue =0).pack()
@@ -149,13 +149,13 @@ class MatplotlibGUI:
         #Finaliza la pantalla del capacitor de placas paralelas
 
         #Pantalla para el capacitor esférico
-        self.radio_Label = tk.Label(self.tab2, text="Radio exterior").pack()
+        self.radio_Label = tk.Label(self.tab2, text="Radio exterior (m)").pack()
         self.exrad = tk.Entry(self.tab2)
         self.exrad.pack()
-        self.radio_Label = tk.Label(self.tab2, text="Radio interior").pack()
+        self.radio_Label = tk.Label(self.tab2, text="Radio interior (m)").pack()
         self.inrad = tk.Entry(self.tab2)
         self.inrad.pack()
-        self.voltage2_label = tk.Label(self.tab2, text="Voltaje").pack()  
+        self.voltage2_label = tk.Label(self.tab2, text="Voltaje (V)").pack()  
         self.voltage2 = tk.Entry(self.tab2)
         self.voltage2.pack()
         self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue = 0).pack()
@@ -164,16 +164,16 @@ class MatplotlibGUI:
         #Finaliza la pantalla del capacitor esférico
 
         #Pantalla para el capacitor cilíndrico
-        self.length_Labelc = tk.Label(self.tab3, text="Longitud").pack()
+        self.length_Labelc = tk.Label(self.tab3, text="Longitud (m)").pack()
         self.lengthc = tk.Entry(self.tab3)
         self.lengthc.pack()
-        self.radio_Labelc = tk.Label(self.tab3, text="Radio exterior").pack()
-        self.inradc = tk.Entry(self.tab3)
-        self.inradc.pack()
-        self.radio_Labelc2 = tk.Label(self.tab3, text="Radio interior").pack()
+        self.radio_Labelc = tk.Label(self.tab3, text="Radio exterior (m)").pack()
         self.exradc = tk.Entry(self.tab3)
         self.exradc.pack()
-        self.voltage3_label = tk.Label(self.tab3, text="Voltaje").pack()
+        self.radio_Labelc2 = tk.Label(self.tab3, text="Radio interior (m)").pack()
+        self.inradc = tk.Entry(self.tab3)
+        self.inradc.pack()
+        self.voltage3_label = tk.Label(self.tab3, text="Voltaje (V)").pack()
         self.voltage3 = tk.Entry(self.tab3)
         self.voltage3.pack()
         self.checkbox5 = tk.Checkbutton(self.tab3, text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue = 0).pack()
