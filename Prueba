@@ -16,12 +16,24 @@ class MatplotlibGUI:
 
     def drawCilinder(self):
         pass
-    def drawSPhere(self, intrad, exrad):
+    def drawSPhere(self, intrad, exrad, half, full):
         self.ax.clear()
-        sphere2 = patches.Circle((0, 0), exrad, linewidth=1, edgecolor='b', fill=False)
-        sphere1 = patches.Circle((0, 0), intrad, linewidth=1, edgecolor='r', fill =False)
+        sphere2 = patches.Circle((0, 0), exrad, linewidth=3, edgecolor='b', facecolor = "white")
+        sphere1 = patches.Circle((0, 0), intrad, linewidth=1, edgecolor='r', facecolor = "white")
         
         self.ax.add_patch(sphere2)
+        if (full == 1):
+            sphere3 = patches.Circle((0,0), exrad, linewidth=0, edgecolor='gray', facecolor='gray')
+            self.ax.add_patch(sphere3)
+
+        if (half == 1):
+            theta = np.linspace(0, np.pi, 100)
+            x = 0 + exrad * np.cos(theta)
+            y = 0 + exrad * np.sin(theta)
+
+            # Fill the upper half with a color (e.g., blue)
+            self.ax.fill_between(x, y, color='gray', alpha=0.5)
+        
         self.ax.add_patch(sphere1)
         self.canvas.draw()
 
@@ -79,7 +91,7 @@ class MatplotlibGUI:
             inrad = float(self.inrad.get())
             exrad = float(self.exrad.get())
             voltage = float(self.voltage2.get())
-            self.drawSPhere(inrad, exrad)
+            self.drawSPhere(inrad, exrad, self.half.get(), self.full.get())
             self.calcSphereData(inrad, exrad, voltage) 
         elif (type == "Cilindrico"):
             inradc = float(self.inradc.get())
@@ -159,7 +171,7 @@ class MatplotlibGUI:
         self.voltage2 = tk.Entry(self.tab2)
         self.voltage2.pack()
         self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue = 0).pack()
-        self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo", variable = self.half, onvalue = 1, offvalue = 0).pack()
+        self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo", variable = self.full, onvalue = 1, offvalue = 0).pack()
         self.calcButton2 = tk.Button(self.tab2, text="Calcular", command=lambda: self.calculateData("Esferico")).pack()
         #Finaliza la pantalla del capacitor esférico
 
