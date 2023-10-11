@@ -17,7 +17,7 @@ def spherical_capacitor_capacity(r1, r2, epsilon):
       if x ==r1:
         return 0
       else:
-        return 4 * np.pi * epsilon * x**2 / (x**2 - r1**2)
+        return 3.40 * x**2 / (x**2 - r1**2)
 
     integral = integrate.quad(integrand, r1, r2)
     capacity = integral[0]
@@ -32,5 +32,5 @@ def main():
     capacity = spherical_capacitor_capacity(r1, r2, epsilon)
 
     print("La capacidad del condensador esférico es de {} faradios.".format(capacity))
-
+#pinche pedro
 main()
