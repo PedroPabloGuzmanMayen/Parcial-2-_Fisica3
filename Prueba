@@ -9,6 +9,7 @@ from tkinter import ttk
 import numpy as np
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from tkinter import IntVar
+import math
 
 
 class MatplotlibGUI:
@@ -53,6 +54,13 @@ class MatplotlibGUI:
         energy = 0.5*charge*voltage
         self.result2.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitante) + "F\n" + "Energía: " + str(energy) + "J")
 
+    def calcCilinderData(self, inrad, exrad, length, voltage):
+        capacitance = (2*np.pi*8.85e-12*length) / (math.log(exrad/inrad))
+        charge = capacitance * voltage
+        energy = 0.5*charge*voltage
+        self.result3.config(text = "Carga: " + str(charge) + "C\n" + "Capacitancia: " + str(capacitance) + "F\n" + "Energía: " + str(energy) + "J")
+
+
         
     
     def calculateData(self, type):
@@ -67,14 +75,19 @@ class MatplotlibGUI:
 
             self.drawPlates(length, separation, height, self.half.get(), self.full.get())
             self.calcPlateswithoutDielectric(length, separation, height, voltage)
-        if (type == "Esferico"):
+        elif (type == "Esferico"):
             inrad = float(self.inrad.get())
             exrad = float(self.exrad.get())
             voltage = float(self.voltage2.get())
             self.drawSPhere(inrad, exrad)
             self.calcSphereData(inrad, exrad, voltage) 
         elif (type == "Cilindrico"):
-            pass
+            inradc = float(self.inradc.get())
+            exradc = float(self.exradc.get())
+            voltage = float(self.voltage3.get())
+            lengthc = float(self.lengthc.get())
+            self.calcCilinderData(inradc, exradc, lengthc, voltage)
+
 
 
 
@@ -103,6 +116,7 @@ class MatplotlibGUI:
         toolbar.update()
         toolbar.pack()
         toolbar.pan() #Habilitar la navegación mediante el mouse
+        self.dielectricConst = 3.40 #Constante dieléctrica del Plexiglas
         #Definir los botones para dibujar las distribuciones de carga
         self.notebook = ttk.Notebook(master)
         self.tab1  = ttk.Frame(self.notebook)
@@ -144,16 +158,38 @@ class MatplotlibGUI:
         self.voltage2_label = tk.Label(self.tab2, text="Voltaje").pack()  
         self.voltage2 = tk.Entry(self.tab2)
         self.voltage2.pack()
-        #self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad").pack()
-        #self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo").pack()
+        self.checkbox3 = tk.Checkbutton(self.tab2, text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue = 0).pack()
+        self.checkbox4 = tk.Checkbutton(self.tab2, text="Dieléctrico completo", variable = self.half, onvalue = 1, offvalue = 0).pack()
         self.calcButton2 = tk.Button(self.tab2, text="Calcular", command=lambda: self.calculateData("Esferico")).pack()
         #Finaliza la pantalla del capacitor esférico
+
+        #Pantalla para el capacitor cilíndrico
+        self.length_Labelc = tk.Label(self.tab3, text="Longitud").pack()
+        self.lengthc = tk.Entry(self.tab3)
+        self.lengthc.pack()
+        self.radio_Labelc = tk.Label(self.tab3, text="Radio exterior").pack()
+        self.inradc = tk.Entry(self.tab3)
+        self.inradc.pack()
+        self.radio_Labelc2 = tk.Label(self.tab3, text="Radio interior").pack()
+        self.exradc = tk.Entry(self.tab3)
+        self.exradc.pack()
+        self.voltage3_label = tk.Label(self.tab3, text="Voltaje").pack()
+        self.voltage3 = tk.Entry(self.tab3)
+        self.voltage3.pack()
+        self.checkbox5 = tk.Checkbutton(self.tab3, text="Dieléctrico a la mitad", variable = self.half, onvalue = 1, offvalue = 0).pack()
+        self.checkbox6 = tk.Checkbutton(self.tab3, text="Dieléctrico completo", variable = self.half, onvalue = 1, offvalue = 0).pack()
+        self.calcButton3 = tk.Button(self.tab3, text="Calcular", command=lambda: self.calculateData("Cilindrico")).pack()
+        #Finaliza la pantalla del capacitor cilíndrico
+
+
 
         #Etiquetas que almacenan los resultados de los cálculos
         self.result1 = tk.Label(self.tab1, text="")
         self.result1.pack()
         self.result2 = tk.Label(self.tab2, text="")
         self.result2.pack()
+        self.result3 = tk.Label(self.tab3, text="")
+        self.result3.pack()
 
 
 
